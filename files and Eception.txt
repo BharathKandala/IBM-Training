@@ -1,0 +1,178 @@
+Exception Handling
+---------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Exception_Handling
+{
+    class Program
+    {
+        public static void methodDivide()
+        {
+            int n1, n2, res;
+            try
+            {
+                Console.WriteLine("Enter the value of n1 and n2");
+                n1 = int.Parse(Console.ReadLine());
+                n2 = int.Parse(Console.ReadLine());
+                res = n1 / n2;
+                Console.WriteLine($"Result={res}");
+            }
+            catch (FormatException f)
+            {
+                //Console.WriteLine("Please enter the Number or your input is not a number");
+                //Console.WriteLine(f.Message);
+                throw f;
+            }
+            catch (DivideByZeroException d)
+            {
+                Console.WriteLine(d.Message);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                Console.WriteLine("end of the methodDivide program");
+            }
+
+        }
+        static void Main(string[] args)
+        {
+            try 
+            {
+                methodDivide();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message+"\n"+e.TargetSite+"\n"+e.Source);
+            }
+            finally
+            {
+                Console.WriteLine("end of the main program");
+            }
+            Console.ReadKey();
+        }
+    }
+}
+-----------------------------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Runtime.Serialization;
+
+namespace Exception_handling2
+{
+    class AgeException:ApplicationException
+    {
+        string errmsg;
+        // age;
+        public AgeException(int age)
+        {
+            errmsg = age + "is invalid.It should b/w 18 to 65";
+        }
+        public override string ToString()
+        {
+            return errmsg;
+        }
+    }
+    class Program
+    {
+
+       static void Main(string[] args)
+            {
+            int age;
+            try
+            {
+                Console.WriteLine("Enter the employee age");
+                age = int.Parse(Console.ReadLine());
+                if (age < 1 || age > 65)
+                {
+                    throw new AgeException(age);
+                }
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                Console.WriteLine("End of main");
+            }
+            Console.ReadLine();
+       }
+    }
+}
+===========================================================================================================
+File Handling
+-----------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+
+namespace File_IODemos
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            /* string path = "E:\\C#\\test1.txt";
+             //File.Create(path);
+             Console.WriteLine("write the content which you want to write text file");
+             string content = Console.ReadLine();
+             if(File.Exists(path))
+             {
+                 File.WriteAllText(path, content);
+             }
+             else
+             {
+                 File.Create(path);
+                 File.WriteAllText(path, content);
+             }
+             using(FileStream fs=File.OpenRead(path))
+             {
+                 byte[] b = new byte[1024];
+                 UTF8Encoding uTF8Encoding = new UTF8Encoding(true);
+                 fs.Read(b, 0, b.Length);
+                 Console.WriteLine(uTF8Encoding.GetString(b));
+             }*/
+            string source = @"E:\C#\files\samplesource";
+            string target = @"E:\C#\files\sampledestination";
+            DirectoryInfo sdi = new DirectoryInfo(source);
+            DirectoryInfo tdi = new DirectoryInfo(target);
+            if (!tdi.Exists)
+            {
+                tdi.Create();
+            }
+            if (!sdi.Exists)
+            {
+              sdi.Create();
+            }
+            foreach (FileInfo f1 in sdi.GetFiles())
+            {
+                f1.CopyTo(Path.Combine(tdi.ToString(), f1.Name), true);
+                Console.WriteLine($"copying files:{tdi.FullName} {f1.Name}");
+            }
+            foreach(DirectoryInfo sourceSubDir in sdi.GetDirectories())
+            {
+                DirectoryInfo targetsubdir = tdi.CreateSubdirectory(sourceSubDir.Name);
+                foreach(FileInfo fi in sourceSubDir.GetFiles())
+                {
+                    fi.CopyTo(Path.Combine(targetsubdir.ToString(), fi.Name), true);
+                    Console.WriteLine($"copying files:{targetsubdir.FullName}/{fi.Name}");
+                }
+            }
+            Console.ReadLine();
+        }
+    }
+}
